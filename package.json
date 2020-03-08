@@ -1,0 +1,35 @@
+{
+  "name": "temple",
+  "displayName": "temple",
+  "description": "Templefile language support",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.42.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "temple",
+        "aliases": [
+          "Templefile",
+          "temple"
+        ],
+        "extensions": [
+          ".temple",
+          ".templefile"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "temple",
+        "scopeName": "root.temple",
+        "path": "./syntaxes/temple.tmLanguage.json"
+      }
+    ]
+  }
+}

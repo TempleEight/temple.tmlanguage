@@ -1,0 +1,152 @@
+---
+# Comment: ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*)
+# End of line inside block: (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\})
+scopeName: root.temple
+patterns:
+  - include: '#comments'
+  - include: '#blockType'
+  - include: '#attribute'
+  - include: '#metadata'
+
+repository:
+  blockType:
+    match: |
+      (?x)
+        ([A-Z][A-Za-z0-9_]*) # class name
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        : #colon
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        ([a-z][A-Za-z0-9_]*) # block type name
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        \{ # open brace
+    captures:
+      1: { name: entity.name }
+      2: { name: comment.block }
+      3: { name: comment.block }
+      4: { name: entity.name.type }
+      5: { name: comment.block }
+
+  annotation:
+    match: '@[a-z][A-Za-z0-9_]*'
+    name: keyword
+
+  comma:
+    match: ','
+    captures:
+      0: {}
+  comments:
+    patterns:
+      - match: //.*
+        name: comment.line.double-slash
+      - match: '/\*[\s\S]*?\*/'
+        name: comment.block
+  attribute:
+    begin: |
+      (?x)
+        ([a-z][A-Za-z0-9_]*) # field name
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        : # colon
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        ([A-Za-z][A-Za-z0-9_]*) # type name
+    beginCaptures:
+      1: { name: entity.name }
+      2: { name: comment.block }
+      3: { name: comment.block }
+      4: { name: entity.name.type }
+    end: |
+      (?x)
+        (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
+    patterns:
+      - include: '#argsList'
+      - include: '#annotation'
+      - include: '#comments'
+      - include: '#numeric'
+  metadata:
+    patterns:
+      - include: '#fullMetadata'
+      - include: '#shorthandMetadata'
+      - include: '#emptyMetadata'
+  shorthandMetadata:
+    begin: |
+      (?x)
+        (\#[a-z][A-Za-z0-9_]*) # hash followed by an identifier
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        \[ # open shorthand
+    beginCaptures:
+      1: { name: keyword }
+      2: { name: comment.block }
+      3: { name: comment.block }
+      4: { name: entity.name.type }
+      5: { name: comment.block }
+    end: |
+      (?x)
+        \] # close shorthand
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
+    endCaptures:
+      1: { name: comment.block }
+    patterns:
+      - include: '#comments'
+      - include: '#token'
+      - include: '#numeric'
+  fullMetadata:
+    begin: |
+      (?x)
+        (\#[a-z][A-Za-z0-9_]*) # hash followed by an identifier
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        \( # open arg list
+    beginCaptures:
+      1: { name: keyword }
+      2: { name: comment.block }
+      3: { name: comment.block }
+      4: { name: entity.name.type }
+      5: { name: comment.block }
+    end: |
+      (?x)
+        \) # close arg list
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
+    endCaptures:
+      1: { name: comment.block }
+    patterns:
+      - include: '#comments'
+      - include: '#token'
+      - include: '#numeric'
+      - include: '#param'
+  emptyMetadata:
+    match: |
+      (?x)
+        (\#[a-z][A-Za-z0-9_]*) # hash followed by an identifier
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
+    captures:
+      1: { name: keyword }
+  argsList:
+    begin: '\('
+    end: '\)'
+    patterns:
+      - include: '#comments'
+      - include: '#token'
+      - include: '#numeric'
+      - include: '#param'
+  param:
+    match: |
+      (?x)
+        ([a-zA-Z_][a-zA-Z_0-9]*) # identifier name
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        : # colon
+    captures:
+      1: { name: variable.parameter }
+      2: { name: comment.block }
+      3: {}
+  numeric:
+    match: '[-+]?\d+(\.\d+)?'
+    name: constant.numeric
+  numeric2:
+    match: '[-+]?\d+(\.\d+)?'
+    name: keyword
+  array:
+    begin: '['
+    end: ']'
+    captures:
+      0: { name: punctuation.paren }
