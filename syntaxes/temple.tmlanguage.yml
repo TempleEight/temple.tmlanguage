@@ -5,7 +5,8 @@ scopeName: root.temple
 patterns:
   - include: '#comments'
   - include: '#blockType'
-  - include: '#attribute'
+  - include: '#builtInAttribute'
+  - include: '#userDefinedAttribute'
   - include: '#metadata'
 
 repository:
@@ -16,43 +17,40 @@ repository:
         ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
         : #colon
         ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
-        ([a-z][A-Za-z0-9_]*) # block type name
+        (target|project|service|struct) # block type name
         ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
         \{ # open brace
     captures:
-      1: { name: entity.name }
+      1: { name: entity.name.class }
       2: { name: comment.block }
       3: { name: comment.block }
-      4: { name: entity.name.type }
+      4: { name: keyword.other }
       5: { name: comment.block }
 
   annotation:
     match: '@[a-z][A-Za-z0-9_]*'
     name: keyword
 
-  comma:
-    match: ','
-    captures:
-      0: {}
   comments:
     patterns:
       - match: //.*
         name: comment.line.double-slash
       - match: '/\*[\s\S]*?\*/'
         name: comment.block
-  attribute:
+
+  builtInAttribute:
     begin: |
       (?x)
         ([a-z][A-Za-z0-9_]*) # field name
         ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
         : # colon
         ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
-        ([A-Za-z][A-Za-z0-9_]*) # type name
+        (bool|string|int|float|datetime|date|time|data) # type name
     beginCaptures:
       1: { name: entity.name }
       2: { name: comment.block }
       3: { name: comment.block }
-      4: { name: entity.name.type }
+      4: { name: support.type }
     end: |
       (?x)
         (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
@@ -61,11 +59,35 @@ repository:
       - include: '#annotation'
       - include: '#comments'
       - include: '#numeric'
+
+  userDefinedAttribute:
+    begin: |
+      (?x)
+        ([a-z][A-Za-z0-9_]*) # field name
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        : # colon
+        ((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*) # space/comment?
+        ([A-Z][A-Za-z0-9_]*) # type name
+    beginCaptures:
+      1: { name: entity.name }
+      2: { name: comment.block }
+      3: { name: comment.block }
+      4: { name: entity.name.class }
+    end: |
+      (?x)
+        (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
+    patterns:
+      - include: '#argsList'
+      - include: '#annotation'
+      - include: '#comments'
+      - include: '#numeric'
+
   metadata:
     patterns:
       - include: '#fullMetadata'
       - include: '#shorthandMetadata'
       - include: '#emptyMetadata'
+
   shorthandMetadata:
     begin: |
       (?x)
@@ -89,6 +111,7 @@ repository:
       - include: '#comments'
       - include: '#token'
       - include: '#numeric'
+
   fullMetadata:
     begin: |
       (?x)
@@ -113,6 +136,7 @@ repository:
       - include: '#token'
       - include: '#numeric'
       - include: '#param'
+
   emptyMetadata:
     match: |
       (?x)
@@ -121,6 +145,7 @@ repository:
         (;|(?=((?:\s*(?:/\*[\s\S]*?\*/|//.*\n))*\s*))\}) # semicolon or end of block
     captures:
       1: { name: keyword }
+
   argsList:
     begin: '\('
     end: '\)'
@@ -129,6 +154,7 @@ repository:
       - include: '#token'
       - include: '#numeric'
       - include: '#param'
+
   param:
     match: |
       (?x)
@@ -138,15 +164,7 @@ repository:
     captures:
       1: { name: variable.parameter }
       2: { name: comment.block }
-      3: {}
+
   numeric:
     match: '[-+]?\d+(\.\d+)?'
     name: constant.numeric
-  numeric2:
-    match: '[-+]?\d+(\.\d+)?'
-    name: keyword
-  array:
-    begin: '['
-    end: ']'
-    captures:
-      0: { name: punctuation.paren }
