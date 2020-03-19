@@ -100,6 +100,11 @@
                 {
                     "match": "/\\*[\\s\\S]*?\\*/",
                     "name": "comment.block"
+                },
+                {
+                    "begin": "/\\*",
+                    "end": "\\*/",
+                    "name": "comment.block"
                 }
             ]
         },
