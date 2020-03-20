@@ -170,7 +170,7 @@
             ]
         },
         "numeric": {
-            "match": "[-+]?\\d+(\\.\\d+)?",
+            "match": "[-+]?\\d+(\\.\\d+)?[GgMmKk]?",
             "name": "constant.numeric"
         },
         "param": {
