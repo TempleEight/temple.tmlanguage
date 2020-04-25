@@ -1,35 +1,55 @@
 {
-  "name": "temple",
-  "displayName": "temple",
-  "description": "Templefile language support",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.42.0"
-  },
-  "categories": [
-    "Programming Languages"
-  ],
-  "contributes": {
-    "languages": [
-      {
-        "id": "temple",
-        "aliases": [
-          "Templefile",
-          "temple"
-        ],
-        "extensions": [
-          ".temple",
-          ".templefile"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "temple",
-        "scopeName": "root.temple",
-        "path": "./syntaxes/temple.tmLanguage.json"
-      }
-    ]
-  }
+	"name": "temple",
+	"displayName": "Templefile Syntax Highlighting",
+	"publisher": "TempleEight",
+	"description": "Templefile language support",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.42.0"
+	},
+	"keywords": [
+		"temple",
+		"templefile",
+		"templeeight"
+	],
+	"categories": [
+		"Programming Languages"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "temple",
+				"aliases": [
+					"Templefile",
+					"temple"
+				],
+				"extensions": [
+					".temple",
+					".templefile"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "temple",
+				"scopeName": "root.temple",
+				"path": "./syntaxes/temple.tmLanguage.json"
+			}
+		]
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/TempleEight/temple.tmlanguage"
+	},
+	"icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#4a9e99",
+		"theme": "dark"
+	},
+	"__metadata": {
+		"id": "246689d8-6360-49b0-9766-6acff22db287",
+		"publisherDisplayName": "TempleEight",
+		"publisherId": "4c7dcd3d-6445-4faa-a132-2fb925d406e4"
+	}
 }
